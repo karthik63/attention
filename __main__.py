@@ -119,13 +119,13 @@ class Attention:
 
             for i in range(self.n_epochs):
 
-                a = self.sess.run(self.adjmat)
-                b = self.sess.run(self.t_mat)
-                c = self.sess.run(self.dgg)
-                d = self.sess.run(self.q)
-                e = self.sess.run(self.part1)
-                f = self.sess.run(self.part2)
-                g = self.sess.run(self.part3)
+                # a = self.sess.run(self.adjmat)
+                # b = self.sess.run(self.t_mat)
+                # c = self.sess.run(self.dgg)
+                # d = self.sess.run(self.q)
+                # e = self.sess.run(self.part1)
+                # f = self.sess.run(self.part2)
+                # g = self.sess.run(self.part3)
 
                 self.sess.run(self.train_op)
 
