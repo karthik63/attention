@@ -12,7 +12,7 @@ parser.add_argument('-input', type=str, default="ego_facebook")
 parser.add_argument('-output', type=str, default="facebook_embedz")
 parser.add_argument('-embed_size', type=int, default=128)
 
-parser.add_argument('--model', type=str, default='new', choices=['old, new'])
+parser.add_argument('--model', type=str, default='old', choices=['old, new'])
 
 parser.add_argument('--lr', type=float, default=1e-2)
 parser.add_argument('--beta', type=float, default=1e-3)
@@ -77,7 +77,7 @@ class Attention:
             sum=0
 
             for i in range(1, self.walk_length + 1):
-                lamda_i = tf.sigmoid(self.lamda) ^ i
+                lamda_i = tf.nn.sigmoid(self.lamda) ** i
                 sum += lamda_i
                 self.lamdas.append(lamda_i)
 
@@ -86,7 +86,7 @@ class Attention:
 
             for i in range(self.walk_length):
 
-                d += self.lamdas[i+1] * t
+                d += self.lamdas[i] * t
 
                 t = tf.matmul(t, t)
 
@@ -100,7 +100,15 @@ class Attention:
 
         self.part2 = tf.reduce_sum(-(1-self.adjmat) * tf.log(tf.clip_by_value(1 - tf.sigmoid(self.lrt), 1e-10, 1)))
 
-        self.part3 = tf.norm(self.q) ** 2
+        if self.model == 'new':
+            self.part3 = tf.norm(self.q) ** 2
+
+        else:
+            p3 = 0
+            for i in range(self.walk_length):
+                p3 += self.lamdas[i] ** 2
+
+            self.part3 = p3
 
         self.loss = tf.reduce_sum(self.part1) + tf.reduce_sum(self.part2) + self.part3
 
